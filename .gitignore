@@ -7,6 +7,9 @@ config/local.secrets.env
 .env
 .env.*
 
+# Obsolete transport wrapper (open repo root in Cursor instead)
+api-evidence-mapper-email-safe/
+
 # User-supplied evidence. Never commit these.
 inputs/
 runtime/

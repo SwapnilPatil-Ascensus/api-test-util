@@ -1,84 +1,138 @@
 # API Evidence Mapper
 
-API Evidence Mapper is a local-first utility for reconstructing and validating a complete Postman collection from incomplete and conflicting evidence.
+Local-first utility that reconstructs a **Postman Collection v2.1**, QC4 environment template, endpoint inventory, and migration mapping from incomplete API evidence — without modifying source repositories or requiring cloud credentials.
 
-It reads, but does not modify:
+Built for **Unite MSC Mobile** API migration; reusable for other API projects via `config/project.toml`.
 
-- service/application source repositories,
-- legacy API integration-test repositories,
-- a target/new API framework repository,
-- partial Postman collections and environments,
-- sanitized browser or mobile WebView HAR captures,
-- optional OpenAPI/Swagger definitions.
+---
 
-It produces:
+## What it does
 
-- a canonical endpoint inventory,
-- an evidence-to-endpoint migration matrix in CSV and Excel,
-- a Postman Collection v2.1 JSON file,
-- a QC4 environment template with placeholders only,
-- one cURL preview per endpoint,
-- manual-testing guidance,
-- conflict, gap, and unresolved-value reports,
-- local validation commands and Newman reports.
+| Input (read-only) | Output (local `outputs/<project>/`) |
+|---|---|
+| Service/application source repos | Canonical endpoint inventory (JSON + CSV) |
+| Legacy integration-test repos | Migration matrix (CSV + Excel) |
+| Target API automation framework | Postman Collection v2.1 |
+| Partial Postman collections/environments | QC4 environment template (placeholders only) |
+| Sanitized HAR captures | Redacted cURL preview per endpoint |
+| Optional OpenAPI/Swagger | Manual-testing guides and validation reports |
 
-## What this utility does not do
+## What it does not do
 
-It does not create automated test cases. It does not commit secrets. It does not modify any source repository. It does not infer credentials, account numbers, tokens, PII, or production data. It does not silently resolve contradictory evidence.
+- Create automated test cases
+- Commit secrets, tokens, or PII
+- Modify any source repository
+- Call QC4 unless you explicitly run the guarded Newman wrapper with `--allow-network`
 
-## Why the output uses Postman Collection v2.1
+---
 
-The default execution path is fully local and does not require a Postman API key or cloud login. Newman runs Collection v2.1 JSON locally. The utility therefore generates v2.1 as the compatibility baseline. A later migration to Postman v3 can be done separately if Native Git/Postman cloud features are required.
+## Repository layout
 
-## Fast start
-
-1. Extract this folder outside the three source repositories.
-2. Run `scripts/initialize.ps1` on Windows or `scripts/initialize.sh` on macOS/Linux.
-3. Replace the path placeholders and QC4 non-secret host values in `config/project.toml`.
-4. Run `scripts/bootstrap.ps1` on Windows or `scripts/bootstrap.sh` on macOS/Linux.
-5. Run `scripts/validate_fixture.ps1` or `scripts/validate_fixture.sh`. This proves the package without touching QC4.
-6. Run `scripts/run_all.ps1` or `scripts/run_all.sh` against the configured local evidence.
-7. Review `outputs/<project>/reports/VALIDATION-REPORT.md` before running any QC4 request.
-8. Copy `config/local.secrets.env.example` to `config/local.secrets.env` only for a live run, keep values local, and invoke the guarded Newman wrapper with `--allow-network`.
-
-The complete Cursor execution instruction is in `START-HERE-CURSOR.md` and `CURSOR-MASTER-PROMPT.md`.
-
-## Primary command
-
-```powershell
-python -m api_evidence_mapper all --config config/project.toml
+```
+api-test-util/
+├── config/           # Example config + local secrets template (project.toml is git-ignored)
+├── docs/             # Architecture, operating model, execution playbook
+├── fixtures/         # Synthetic evidence for offline validation
+├── scripts/          # Bootstrap, validation, and run-all entry points
+├── src/              # Python package (api_evidence_mapper)
+├── templates/        # Override CSV and mapping templates
+├── tests/            # Unit tests
+├── tools/            # Node Postman Collection SDK validator
+├── archive/          # Historical transport notes
+├── CURSOR-MASTER-PROMPT.md   # Full Cursor agent instruction set
+└── START-HERE-CURSOR.md      # Quick Cursor onboarding
 ```
 
-This command is offline. It scans local evidence and generates artifacts; it does not call QC4.
+Generated artifacts land in `outputs/<project_id>/` (git-ignored).
 
-## Guarded QC4 execution
+---
+
+## Quick start
+
+### 1. Prerequisites
+
+- Python 3.11+
+- Node.js 18+ (for collection structural validation)
+- Git
+
+### 2. Bootstrap
 
 ```powershell
-python scripts/run_newman_safe.py `
-  --collection outputs/unite-msc-mobile/postman/unite-msc-mobile.postman_collection.json `
-  --environment outputs/unite-msc-mobile/postman/unite-msc-mobile-qc4.postman_environment.json `
-  --secrets config/local.secrets.env `
-  --allow-network
+cd C:\Workspace\GitLab\api-test-util
+.\scripts\bootstrap.ps1
 ```
 
-The wrapper refuses to run without the explicit `--allow-network` flag. It merges secrets into a restricted temporary environment file, removes that file after execution, and does not place secret values on the Newman command line. JSON reports are disabled unless an explicit `--json-report` path is supplied because those reports may contain request or response data.
+### 3. Configure local paths
 
-## Recommended evidence precedence
+```powershell
+Copy-Item config\project.example.toml config\project.toml
+# Edit config\project.toml — set repository paths, Postman files, QC4 base URL
+```
 
-Evidence is resolved field by field, not file by file:
+See `config/project.example.toml` for all fields. Local path registry: `config/local.paths.toml` (git-ignored).
 
-1. Server route definitions and API specifications establish intended method/path and contract.
-2. Existing integration tests establish known request construction, variables, and expected usage.
-3. Sanitized HAR establishes what the client actually called in QC4 and exposes gateway/BFF rewrites.
-4. Partial Postman content contributes known working requests, descriptions, variables, and scripts, but is not assumed complete.
-5. Manual override files resolve only documented conflicts.
+### 4. Validate with fixtures (no real evidence needed)
 
-Every final field retains evidence references and a confidence level. Configurable `strip_prefixes` and `path_aliases` reconcile BFF/gateway routes with service-contract routes without adding Unite-specific logic to the parser.
+```powershell
+.\scripts\validate_fixture.ps1
+```
 
-## Detailed documentation
+### 5. Generate against real evidence
 
-- `docs/ARCHITECTURE.md`
-- `docs/OPERATING-MODEL.md`
-- `docs/PARSER-EXTENSION-GUIDE.md`
-- `docs/UNITE-MSC-STARTER-CONFIG.md`
-- `docs/ROLE-AND-GATE-MATRIX.md`
+```powershell
+.\scripts\run_all.ps1
+```
+
+Review `outputs/<project>/reports/VALIDATION-REPORT.md` before any live QC4 run.
+
+---
+
+## Primary commands
+
+| Command | Purpose |
+|---|---|
+| `python -m api_evidence_mapper all --config config/project.toml` | Offline scan + generate |
+| `.\scripts\validate_fixture.ps1` | Prove package with synthetic data |
+| `.\scripts\run_all.ps1` | Full gate: lint, test, generate, validate |
+| `python scripts/run_newman_safe.py --allow-network ...` | Guarded live QC4 execution |
+
+---
+
+## Documentation
+
+| Document | Contents |
+|---|---|
+| [docs/EXECUTION-PLAYBOOK.md](docs/EXECUTION-PLAYBOOK.md) | Step-by-step runbook |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Modules, data flow, diagrams |
+| [docs/OPERATING-MODEL.md](docs/OPERATING-MODEL.md) | Phases A–E (offline → live) |
+| [docs/UNITE-MSC-STARTER-CONFIG.md](docs/UNITE-MSC-STARTER-CONFIG.md) | Unite MSC-specific settings |
+| [docs/PARSER-EXTENSION-GUIDE.md](docs/PARSER-EXTENSION-GUIDE.md) | Adding custom route parsers |
+| [VALIDATION-EVIDENCE.md](VALIDATION-EVIDENCE.md) | Recorded validation results |
+
+---
+
+## Evidence precedence
+
+Resolved **field by field**, not file by file:
+
+1. OpenAPI / service route definitions → intended contract
+2. Legacy integration tests → known request construction
+3. Sanitized HAR → observed QC4 client traffic
+4. Partial Postman → working examples and variables
+5. Documented CSV overrides → operator decisions
+
+Statuses: `READY`, `PARTIAL`, `CODE_ONLY`, `POSTMAN_ONLY`, `HAR_ONLY`, `CONFLICT`, `BLOCKED`.
+
+---
+
+## Cursor usage
+
+1. Open **`C:\Workspace\GitLab\api-test-util`** in Cursor (not a source repository).
+2. Follow [START-HERE-CURSOR.md](START-HERE-CURSOR.md).
+3. For full agent execution, paste [CURSOR-MASTER-PROMPT.md](CURSOR-MASTER-PROMPT.md).
+
+---
+
+## License
+
+See [LICENSE](LICENSE).

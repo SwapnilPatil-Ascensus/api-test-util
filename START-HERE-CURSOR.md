@@ -1,19 +1,33 @@
 # Start Here in Cursor
 
-Open this extracted utility folder in Cursor. Do not open Cursor at the root of any source repository for this task.
+Open **`C:\Workspace\GitLab\api-test-util`** in Cursor — the repository root. Do not open a source repository (UniteMSC, api-test-automation) as the workspace for this work.
 
-1. Copy `config/project.example.toml` to `config/project.toml`.
-2. Put the three local repository paths, partial Postman paths, and HAR paths into `config/project.toml`.
-3. Run the bootstrap script, then paste the prompt from `CURSOR-MASTER-PROMPT.md` into Cursor Agent mode.
-4. Allow Cursor to inspect and edit only this utility folder. Source repositories are read-only evidence.
-5. Do not provide credentials in chat. Put local values into `config/local.secrets.env` only after artifact generation is complete.
+## Quick path
 
-Expected finish condition:
+1. Run `scripts/bootstrap.ps1`
+2. Copy `config/project.example.toml` → `config/project.toml` and set local paths
+3. Run `scripts/validate_fixture.ps1` (proves the package offline)
+4. Run `scripts/run_all.ps1` (generates real artifacts when paths are configured)
+5. Review `outputs/<project>/reports/` before any live QC4 call
 
-- offline scan succeeds,
-- unit tests pass,
-- collection structural validation passes,
-- mapping CSV/XLSX and documentation are created,
-- all source conflicts and missing runtime values are explicitly reported,
-- no source repository changed,
-- no network execution occurred unless you explicitly supplied `--allow-network`.
+Full step-by-step instructions: **[docs/EXECUTION-PLAYBOOK.md](docs/EXECUTION-PLAYBOOK.md)**
+
+## Cursor agent mode
+
+For end-to-end agent execution, paste the contents of **[CURSOR-MASTER-PROMPT.md](CURSOR-MASTER-PROMPT.md)** into Cursor Agent.
+
+## Rules
+
+- Source repositories are **read-only** evidence
+- Do not put credentials in chat
+- Put runtime values in `config/local.secrets.env` only (git-ignored)
+- Live QC4 requires explicit `--allow-network` on the Newman wrapper
+
+## Done when
+
+- [ ] Fixture validation passes
+- [ ] Offline generation succeeds
+- [ ] Collection SDK validation passes
+- [ ] Mapping CSV/XLSX and reports exist
+- [ ] Source repositories unchanged
+- [ ] No network execution unless explicitly authorized
