@@ -1,0 +1,61 @@
+project_id = "fixture-mobile"
+project_name = "Fixture Mobile API"
+environment_name = "QC4"
+output_root = "outputs"
+strict_qc4_only = true
+preserve_existing_postman_scripts = false
+
+[[repositories]]
+name = "service-source"
+role = "service_source"
+path = "fixtures/service-source"
+read_only = true
+include = ["**/*.java"]
+exclude = ["**/.git/**"]
+
+[[repositories]]
+name = "legacy-api-tests"
+role = "legacy_api_tests"
+path = "fixtures/legacy-api-tests"
+read_only = true
+include = ["**/*.java"]
+exclude = ["**/.git/**"]
+
+[[repositories]]
+name = "target-framework"
+role = "target_framework"
+path = "fixtures/target-framework"
+read_only = true
+include = ["**/*.java"]
+exclude = ["**/.git/**"]
+
+[inputs]
+partial_postman_collections = ["fixtures/partial.postman_collection.json"]
+partial_postman_environments = ["fixtures/partial-qc4.postman_environment.json"]
+har_files = ["fixtures/qc4-sanitized.har"]
+openapi_files = []
+endpoint_overrides_csv = "templates/endpoint_overrides.csv"
+
+[qc4]
+default_base_url = "https://qc4.example.invalid"
+base_url_variable = "baseUrl"
+
+[qc4.service_base_urls]
+
+[auth]
+default_type = "bearer"
+token_variable = "accessToken"
+username_variable = "username"
+password_variable = "password"
+api_key_variable = "apiKey"
+
+[normalization]
+strip_prefixes = []
+ignore_query_keys = ["timestamp", "ts", "cacheBust", "_", "nonce"]
+concrete_id_patterns = ["uuid", "integer"]
+path_aliases = []
+
+[scan]
+max_file_size_bytes = 2000000
+include_response_examples_from_har = false
+include_sensitive_har_headers = false

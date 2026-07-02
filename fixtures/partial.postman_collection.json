@@ -1,0 +1,22 @@
+{
+  "info": {
+    "name": "Partial Mobile Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Plans",
+      "item": [
+        {
+          "name": "Get Mobile Plans",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "{{baseUrl}}/mobile2api/v1/plans", "host": ["{{baseUrl}}"], "path": ["mobile2api", "v1", "plans"]},
+            "description": "Returns mobile plans available to the member."
+          }
+        }
+      ]
+    }
+  ]
+}

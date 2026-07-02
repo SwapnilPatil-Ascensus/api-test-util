@@ -1,0 +1,2 @@
+method,normalized_path,field,value,reason,approved_by
+# Example: POST,/mobile2api/v1/example,auth_type,bearer,Confirmed by service owner,

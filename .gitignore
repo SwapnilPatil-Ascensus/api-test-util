@@ -1,0 +1,31 @@
+# Local configuration and secrets
+config/project.toml
+config/local.paths.toml
+config/local.secrets.env
+*.local.toml
+*.secrets.env
+.env
+.env.*
+
+# User-supplied evidence. Never commit these.
+inputs/
+runtime/
+outputs/
+TRANSPORT-RECONSTRUCTION-REPORT.txt
+*.har
+*.postman_environment.json
+
+# Python / Node
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+node_modules/
+coverage/
+
+# IDE / OS
+.vscode/settings.json
+.idea/
+.DS_Store
+Thumbs.db

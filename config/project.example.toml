@@ -1,0 +1,91 @@
+project_id = "unite-msc-mobile"
+project_name = "Unite MSC Mobile API"
+environment_name = "QC4"
+output_root = "outputs"
+strict_qc4_only = true
+preserve_existing_postman_scripts = false
+
+# Keep this utility outside all source repositories. All repositories are read-only.
+[[repositories]]
+name = "service-source"
+role = "service_source"
+path = "C:/REPLACE/WITH/SERVICE-SOURCE-REPO"
+read_only = true
+include = ["**/*.java", "**/*.kt", "**/*.cs", "**/*.py", "**/*.js", "**/*.ts", "**/*.json", "**/*.yaml", "**/*.yml"]
+exclude = ["**/target/**", "**/build/**", "**/dist/**", "**/node_modules/**", "**/.git/**", "**/generated/**"]
+
+[[repositories]]
+name = "legacy-api-tests"
+role = "legacy_api_tests"
+path = "C:/REPLACE/WITH/LEGACY-API-TEST-REPO"
+read_only = true
+include = ["**/*.java", "**/*.kt", "**/*.cs", "**/*.py", "**/*.js", "**/*.ts", "**/*.json", "**/*.yaml", "**/*.yml"]
+exclude = ["**/target/**", "**/build/**", "**/dist/**", "**/node_modules/**", "**/.git/**", "**/generated/**"]
+
+[[repositories]]
+name = "target-api-framework"
+role = "target_framework"
+path = "C:/REPLACE/WITH/NEW-API-FRAMEWORK-REPO"
+read_only = true
+include = ["**/*.java", "**/*.kt", "**/*.cs", "**/*.py", "**/*.js", "**/*.ts", "**/*.json", "**/*.yaml", "**/*.yml"]
+exclude = ["**/target/**", "**/build/**", "**/dist/**", "**/node_modules/**", "**/.git/**", "**/generated/**"]
+
+[inputs]
+partial_postman_collections = [
+  "C:/REPLACE/WITH/PARTIAL.postman_collection.json"
+]
+partial_postman_environments = [
+  "C:/REPLACE/WITH/PARTIAL-QC4.postman_environment.json"
+]
+har_files = [
+  # "C:/REPLACE/WITH/mobile-qc4-sanitized.har"
+]
+openapi_files = [
+  # "C:/REPLACE/WITH/openapi.yaml"
+]
+endpoint_overrides_csv = "templates/endpoint_overrides.csv"
+
+[qc4]
+# Non-secret deployment values only. Add one base URL per gateway/service if needed.
+default_base_url = "https://REPLACE-WITH-QC4-HOST"
+base_url_variable = "baseUrl"
+
+[qc4.service_base_urls]
+# mobileBffUrl = "https://REPLACE-WITH-QC4-MOBILE-BFF"
+# authBaseUrl = "https://REPLACE-WITH-QC4-AUTH"
+
+[auth]
+default_type = "bearer"
+token_variable = "accessToken"
+username_variable = "username"
+password_variable = "password"
+api_key_variable = "apiKey"
+
+[normalization]
+# Remove a gateway-only prefix before matching evidence. Example: ["/api-gateway"]
+strip_prefixes = []
+ignore_query_keys = ["timestamp", "ts", "cacheBust", "_", "nonce"]
+concrete_id_patterns = ["uuid", "integer"]
+
+# Map an observed BFF/gateway route to the service-contract route for matching.
+# The generated request still uses the highest-confidence canonical evidence path.
+# [[normalization.path_aliases]]
+# from = "/mobile-bff/api"
+# to = "/mobile2api"
+
+[scan]
+max_file_size_bytes = 2000000
+include_response_examples_from_har = false
+include_sensitive_har_headers = false
+
+# Optional project-specific route patterns. Add these when the built-in parsers
+# do not understand a framework. Capture group 1 should be the method and group 2
+# should be the path unless fixed_method/group numbers are changed.
+#
+# [[custom_patterns]]
+# name = "custom-http-annotation"
+# extensions = [".java"]
+# regex = '''@HttpEndpoint\\(method\\s*=\\s*"(GET|POST|PUT|PATCH|DELETE)",\\s*path\\s*=\\s*"([^"]+)"'''
+# method_group = 1
+# path_group = 2
+# description = "Project-specific endpoint annotation"

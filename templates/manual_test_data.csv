@@ -1,0 +1,4 @@
+variable,value,description,sensitive,source
+memberId,,QC4 member identifier,true,local operator
+accountId,,QC4 account identifier,true,local operator
+planId,,Plan identifier,false,API prerequisite
