@@ -7,16 +7,14 @@ config/local.secrets.env
 .env
 .env.*
 
-# Obsolete transport wrapper (open repo root in Cursor instead)
-api-evidence-mapper-email-safe/
-
 # User-supplied evidence. Never commit these.
 inputs/
 runtime/
 outputs/
-TRANSPORT-RECONSTRUCTION-REPORT.txt
 *.har
 *.postman_environment.json
+!fixtures/qc4-sanitized.har
+!fixtures/partial-qc4.postman_environment.json
 
 # Python / Node
 .venv/

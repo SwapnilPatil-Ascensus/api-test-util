@@ -13,4 +13,4 @@
 | Work for other API projects | generic config, parser extension guide, custom patterns, no Unite-specific parser logic | reusable fixture project |
 | No automated test cases in this phase | collection generation excludes new assertions; scripts are summarized only | collection inspection and scope documents |
 | Validate locally without network calls | fixture validation script and guarded Newman runner | fixture evidence and explicit `--allow-network` requirement |
-| One Cursor execution prompt with roles | `CURSOR-MASTER-PROMPT.md` and role/gate matrix | required closeout summary |
+| One Cursor execution prompt with roles | `docs/CURSOR-MASTER-PROMPT.md` and role/gate matrix | required closeout summary |

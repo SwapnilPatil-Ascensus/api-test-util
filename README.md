@@ -29,21 +29,22 @@ Built for **Unite MSC Mobile** API migration; reusable for other API projects vi
 ## Repository layout
 
 ```
-api-test-util/
-├── config/           # Example config + local secrets template (project.toml is git-ignored)
-├── docs/             # Architecture, operating model, execution playbook
-├── fixtures/         # Synthetic evidence for offline validation
-├── scripts/          # Bootstrap, validation, and run-all entry points
-├── src/              # Python package (api_evidence_mapper)
-├── templates/        # Override CSV and mapping templates
-├── tests/            # Unit tests
-├── tools/            # Node Postman Collection SDK validator
-├── archive/          # Historical transport notes
-├── CURSOR-MASTER-PROMPT.md   # Full Cursor agent instruction set
-└── START-HERE-CURSOR.md      # Quick Cursor onboarding
+api-test-util/                 ← open THIS folder in Cursor (repo root)
+├── config/                    # Example config + local secrets template
+├── docs/                      # Architecture, playbooks, Cursor onboarding, guides
+├── fixtures/                  # Synthetic evidence for offline validation
+├── scripts/                   # Bootstrap, validation, and run-all entry points
+├── src/api_evidence_mapper/   # Python package
+├── templates/                 # Override CSV and mapping templates
+├── tests/                     # Unit tests
+└── tools/                     # Node Postman Collection SDK validator
 ```
 
 Generated artifacts land in `outputs/<project_id>/` (git-ignored).
+
+**Canonical location:** `C:\Workspace\GitLab\api-test-util` — there is no nested copy of this utility inside the repo.
+
+See **[docs/REPOSITORY-GUIDE.md](docs/REPOSITORY-GUIDE.md)** for a full map of every folder, command, and workflow.
 
 ---
 
@@ -102,12 +103,14 @@ Review `outputs/<project>/reports/VALIDATION-REPORT.md` before any live QC4 run.
 
 | Document | Contents |
 |---|---|
+| [docs/REPOSITORY-GUIDE.md](docs/REPOSITORY-GUIDE.md) | **What is where and how to use it** |
+| [docs/START-HERE-CURSOR.md](docs/START-HERE-CURSOR.md) | Quick Cursor onboarding |
 | [docs/EXECUTION-PLAYBOOK.md](docs/EXECUTION-PLAYBOOK.md) | Step-by-step runbook |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Modules, data flow, diagrams |
 | [docs/OPERATING-MODEL.md](docs/OPERATING-MODEL.md) | Phases A–E (offline → live) |
 | [docs/UNITE-MSC-STARTER-CONFIG.md](docs/UNITE-MSC-STARTER-CONFIG.md) | Unite MSC-specific settings |
 | [docs/PARSER-EXTENSION-GUIDE.md](docs/PARSER-EXTENSION-GUIDE.md) | Adding custom route parsers |
-| [VALIDATION-EVIDENCE.md](VALIDATION-EVIDENCE.md) | Recorded validation results |
+| [docs/VALIDATION-EVIDENCE.md](docs/VALIDATION-EVIDENCE.md) | Recorded validation results |
 
 ---
 
@@ -127,9 +130,9 @@ Statuses: `READY`, `PARTIAL`, `CODE_ONLY`, `POSTMAN_ONLY`, `HAR_ONLY`, `CONFLICT
 
 ## Cursor usage
 
-1. Open **`C:\Workspace\GitLab\api-test-util`** in Cursor (not a source repository).
-2. Follow [START-HERE-CURSOR.md](START-HERE-CURSOR.md).
-3. For full agent execution, paste [CURSOR-MASTER-PROMPT.md](CURSOR-MASTER-PROMPT.md).
+1. Open **`C:\Workspace\GitLab\api-test-util`** in Cursor (repo root — not a source repository).
+2. Follow [docs/START-HERE-CURSOR.md](docs/START-HERE-CURSOR.md).
+3. For full agent execution, paste [docs/CURSOR-MASTER-PROMPT.md](docs/CURSOR-MASTER-PROMPT.md).
 
 ---
 
